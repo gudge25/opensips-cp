@@ -18,7 +18,7 @@ cd opensips-cp/
 mysql -Dopensips -p < config/db_schema.mysql
 ```
 ### Cron
-cp config/tools/system/smonitor/opensips_stats_cron /etc/cron.d/
+```cp config/tools/system/smonitor/opensips_stats_cron /etc/cron.d/```
 ###  add to /etc/apache2/sites-enabled/000-default.conf  before ending Virthost
 ```
 <Directory /var/www/html/opensips-cp/web>
@@ -37,33 +37,39 @@ cp config/tools/system/smonitor/opensips_stats_cron /etc/cron.d/
 		Require all denied
 	</DirectoryMatch>
   ```
-
+And
+```
 systemctl restart apache2.service
 systemctl restart cron.service
-
+```
 
 ### OPTIONAL CONF 
+```
 /usr/sbin/osipsconfig
 
 cp opensips_residential_* opensips.cfg
 chmod 644 opensips.cfg
-
+```
 ### IF NEEDED
+```
 apt install opensips-http-modules opensips-dialplan-module opensips-auth-modules rtpproxy
-
+```
 ### change
+```
 modparam("rtpproxy", "rtpproxy_sock", "unix:/var/run/rtpproxy/rtpproxy.sock")  -> in opensips .conf
 usermod -aG rtpproxy opensips 
 
 systemctl restart rtpproxy
 systemctl restart opensips
-
+```
 ### Change network interface in opensips
+```
 socket=udp:eth0:5060   # CUSTOMIZE ME
-
+```
 ### Change httpd for better security 
+```
 modparam("httpd", "ip", "127.0.0.1")
-
+```
 
 
 
