@@ -1,6 +1,6 @@
 ## opensips-cp
 # Ubuntu 22
-
+```
 curl https://apt.opensips.org/opensips-org.gpg -o /usr/share/keyrings/opensips-org.gpg
 echo "deb [signed-by=/usr/share/keyrings/opensips-org.gpg] https://apt.opensips.org jammy 3.5-releases" >/etc/apt/sources.list.d/opensips.list 
 echo "deb [signed-by=/usr/share/keyrings/opensips-org.gpg] https://apt.opensips.org jammy cli-nightly" >/etc/apt/sources.list.d/opensips-cli.list
@@ -16,7 +16,7 @@ git clone -b 9.3.5 https://github.com/OpenSIPS/opensips-cp.git
 chown -R www-data:www-data /var/www/html/opensips-cp/
 cd opensips-cp/
 mysql -Dopensips -p < config/db_schema.mysql
-
+```
 ### Cron
 cp config/tools/system/smonitor/opensips_stats_cron /etc/cron.d/
 ###  add to /etc/apache2/sites-enabled/000-default.conf  before ending Virthost
