@@ -1,14 +1,14 @@
-# opensips-cp
-Ubuntu 22
+## opensips-cp
+# Ubuntu 22
 
 curl https://apt.opensips.org/opensips-org.gpg -o /usr/share/keyrings/opensips-org.gpg
 echo "deb [signed-by=/usr/share/keyrings/opensips-org.gpg] https://apt.opensips.org jammy 3.5-releases" >/etc/apt/sources.list.d/opensips.list 
 echo "deb [signed-by=/usr/share/keyrings/opensips-org.gpg] https://apt.opensips.org jammy cli-nightly" >/etc/apt/sources.list.d/opensips-cli.list
 
 apt update
-apt-get install apache2 libapache2-mod-php php-curl php php-mysql php-gd php-pear php-cli php-apcu git sngrep htop mariadb-server
+apt-get install apache2 libapache2-mod-php php-curl php php-mysql php-gd php-pear php-cli php-apcu git sngrep htop mariadb-server m4
 
-apt install opensips opensips-cli opensips-mysql-module
+apt install opensips opensips-cli opensips-mysql-module 
 
 opensips-cli -> database create
 cd /var/www/html/
@@ -16,9 +16,10 @@ git clone -b 9.3.5 https://github.com/OpenSIPS/opensips-cp.git
 chown -R www-data:www-data /var/www/html/opensips-cp/
 cd opensips-cp/
 mysql -Dopensips -p < config/db_schema.mysql
-### CRON
+
+### Cron
 cp config/tools/system/smonitor/opensips_stats_cron /etc/cron.d/
-### CP to nano /etc/apache2/sites-enabled/000-default.conf 
+###  add to /etc/apache2/sites-enabled/000-default.conf  before ending Virthost
 ```
 <Directory /var/www/html/opensips-cp/web>
 		Options Indexes FollowSymLinks MultiViews
@@ -37,13 +38,33 @@ cp config/tools/system/smonitor/opensips_stats_cron /etc/cron.d/
 	</DirectoryMatch>
   ```
 
-
-
-
 systemctl restart apache2.service
 systemctl restart cron.service
 
 
-# Optional 
-apt install rtpproxy
+### OPTIONAL CONF 
+/usr/sbin/osipsconfig
+
+cp opensips_residential_* opensips.cfg
+chmod 644 opensips.cfg
+
+### IF NEEDED
+apt install opensips-http-modules opensips-dialplan-module opensips-auth-modules rtpproxy
+
+### change
+modparam("rtpproxy", "rtpproxy_sock", "unix:/var/run/rtpproxy/rtpproxy.sock")  -> in opensips .conf
+usermod -aG rtpproxy opensips 
+
+systemctl restart rtpproxy
+systemctl restart opensips
+
+### Change network interface in opensips
+socket=udp:eth0:5060   # CUSTOMIZE ME
+
+### Change httpd for better security 
+modparam("httpd", "ip", "127.0.0.1")
+
+
+
+
 
