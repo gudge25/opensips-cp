@@ -71,6 +71,13 @@ socket=udp:eth0:5060   # CUSTOMIZE ME
 modparam("httpd", "ip", "127.0.0.1")
 ```
 
+###  change 
+```
+modparam("mi_fifo", "fifo_name", "/run/opensips/opensips_fifo")
+
+opensips-cli -x mi which
+```
+
 
 
 
