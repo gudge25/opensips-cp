@@ -1,2 +1,49 @@
 # opensips-cp
-Opensips CP
+Ubuntu 22
+
+curl https://apt.opensips.org/opensips-org.gpg -o /usr/share/keyrings/opensips-org.gpg
+echo "deb [signed-by=/usr/share/keyrings/opensips-org.gpg] https://apt.opensips.org jammy 3.5-releases" >/etc/apt/sources.list.d/opensips.list 
+echo "deb [signed-by=/usr/share/keyrings/opensips-org.gpg] https://apt.opensips.org jammy cli-nightly" >/etc/apt/sources.list.d/opensips-cli.list
+
+apt update
+apt-get install apache2 libapache2-mod-php php-curl php php-mysql php-gd php-pear php-cli php-apcu git sngrep htop mariadb-server
+
+apt install opensips opensips-cli opensips-mysql-module
+
+opensips-cli -> database create
+cd /var/www/html/
+git clone -b 9.3.5 https://github.com/OpenSIPS/opensips-cp.git
+chown -R www-data:www-data /var/www/html/opensips-cp/
+cd opensips-cp/
+mysql -Dopensips -p < config/db_schema.mysql
+### CRON
+cp config/tools/system/smonitor/opensips_stats_cron /etc/cron.d/
+### CP to nano /etc/apache2/sites-enabled/000-default.conf 
+```
+<Directory /var/www/html/opensips-cp/web>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Require all granted
+	</Directory>
+	<Directory /var/www/html/opensips-cp>
+		Options Indexes FollowSymLinks MultiViews
+		AllowOverride None
+		Require all denied
+	</Directory>
+	Alias /cp /var/www/html/opensips-cp/web
+
+	<DirectoryMatch "/var/www/html/opensips-cp/web/tools/.*/.*/(template|custom_actions|lib)/">
+		Require all denied
+	</DirectoryMatch>
+  ```
+
+
+
+
+systemctl restart apache2.service
+systemctl restart cron.service
+
+
+# Optional 
+apt install rtpproxy
+
